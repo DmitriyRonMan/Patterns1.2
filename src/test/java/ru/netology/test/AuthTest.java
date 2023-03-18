@@ -11,6 +11,7 @@ import java.time.Duration;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static ru.netology.data.DataGenerator.Registration.getRegisteredUser;
+import static ru.netology.data.DataGenerator.Registration.getUser;
 import static ru.netology.data.DataGenerator.getRandomLogin;
 import static ru.netology.data.DataGenerator.getRandomPassword;
 
@@ -29,6 +30,16 @@ public class AuthTest {
         $("[data-test-id=password] .input__control").setValue(registeredUser.getPassword());
         $("[data-test-id=action-login] .button__content").click();
         $("div#root").shouldBe(Condition.text("Личный кабинет"));
+    }
+
+    @Test
+    @DisplayName("Should get error message if login with not registered user")
+    void shouldGetErrorIfNotRegisteredUser() {
+        var notRegisteredUser = getUser("active");
+        $("[data-test-id=login] .input__control").setValue(notRegisteredUser.getLogin());
+        $("[data-test-id=password] .input__control").setValue(notRegisteredUser.getPassword());
+        $("[data-test-id=action-login] .button__content").click();
+        $("[data-test-id=error-notification] .notification__content").shouldBe(Condition.text("Ошибка! " + "Неверно указан логин или пароль"), Duration.ofSeconds(10));
     }
 
     @Test
